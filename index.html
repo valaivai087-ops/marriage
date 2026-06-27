@@ -1,0 +1,1293 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Marriage Language OS</title>
+  <style>
+    :root {
+      --ink: #17201b;
+      --muted: #647067;
+      --line: #dfe5df;
+      --paper: #fbfcf8;
+      --soft: #eef5ed;
+      --green: #2f7d57;
+      --green-dark: #1f5f40;
+      --gold: #b5772c;
+      --rose: #bd5b67;
+      --blue: #35738a;
+      --white: #ffffff;
+      --shadow: 0 18px 45px rgba(30, 48, 38, .12);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Microsoft JhengHei", "Noto Sans TC", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(238, 245, 237, .95), rgba(251, 252, 248, 1) 44%),
+        url("https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1800&q=82") center top / cover fixed;
+      min-height: 100vh;
+    }
+
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+
+    .shell {
+      display: grid;
+      grid-template-columns: 272px 1fr;
+      min-height: 100vh;
+      background: rgba(251, 252, 248, .84);
+      backdrop-filter: blur(2px);
+    }
+
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      border-right: 1px solid var(--line);
+      background: rgba(255, 255, 255, .86);
+      padding: 22px 16px;
+      overflow: auto;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 8px 22px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 14px;
+    }
+
+    .mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--white);
+      background: conic-gradient(from 180deg, var(--green), var(--blue), var(--gold), var(--green));
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .brand h1 {
+      font-size: 17px;
+      line-height: 1.12;
+      margin: 0;
+    }
+
+    .brand small {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    nav {
+      display: grid;
+      gap: 6px;
+    }
+
+    .nav-btn {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 11px;
+      border-radius: var(--radius);
+      text-align: left;
+    }
+
+    .nav-btn svg { width: 18px; height: 18px; flex: 0 0 auto; }
+    .nav-btn.active,
+    .nav-btn:hover {
+      background: var(--soft);
+      color: var(--green-dark);
+    }
+
+    main {
+      min-width: 0;
+      padding: 28px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 22px;
+    }
+
+    .hero {
+      min-height: clamp(390px, 58vh, 620px);
+      display: grid;
+      align-content: end;
+      padding: clamp(26px, 5vw, 58px);
+      color: var(--white);
+      background:
+        linear-gradient(90deg, rgba(18, 31, 25, .82), rgba(18, 31, 25, .34) 60%, rgba(18, 31, 25, .12)),
+        url("https://images.unsplash.com/photo-1494774157365-9e04c6720e47?auto=format&fit=crop&w=1800&q=82") center / cover;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 22px;
+    }
+
+    .hero h2 {
+      max-width: 760px;
+      font-size: clamp(36px, 6vw, 78px);
+      line-height: .96;
+      margin: 0 0 18px;
+      letter-spacing: 0;
+    }
+
+    .hero p {
+      max-width: 680px;
+      font-size: clamp(16px, 2vw, 21px);
+      line-height: 1.75;
+      margin: 0 0 26px;
+      color: rgba(255,255,255,.9);
+    }
+
+    .hero-actions,
+    .row,
+    .chips,
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn {
+      border: 1px solid transparent;
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      background: var(--green);
+      color: var(--white);
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+    }
+
+    .btn.secondary {
+      background: var(--white);
+      color: var(--green-dark);
+      border-color: var(--line);
+    }
+
+    .btn.ghost {
+      background: transparent;
+      border-color: rgba(255,255,255,.5);
+      color: var(--white);
+    }
+
+    .btn.icon {
+      width: 42px;
+      padding: 0;
+    }
+
+    .btn svg { width: 18px; height: 18px; }
+
+    .panel {
+      background: rgba(255,255,255,.92);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 8px 22px rgba(30, 48, 38, .06);
+    }
+
+    .section {
+      display: none;
+      animation: fade .2s ease;
+    }
+
+    .section.active { display: block; }
+    @keyframes fade { from { opacity: .5; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 18px;
+      margin: 0 0 16px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: clamp(24px, 3vw, 38px);
+      letter-spacing: 0;
+    }
+
+    .section-head p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.65;
+      max-width: 720px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .span-3 { grid-column: span 3; }
+    .span-4 { grid-column: span 4; }
+    .span-5 { grid-column: span 5; }
+    .span-6 { grid-column: span 6; }
+    .span-7 { grid-column: span 7; }
+    .span-8 { grid-column: span 8; }
+    .span-12 { grid-column: span 12; }
+
+    .card {
+      padding: 18px;
+      min-width: 0;
+    }
+
+    .metric {
+      display: grid;
+      gap: 8px;
+    }
+
+    .metric strong {
+      font-size: 32px;
+      color: var(--green-dark);
+    }
+
+    .metric span, .muted { color: var(--muted); }
+
+    .bar {
+      height: 9px;
+      background: #e8ece8;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar i {
+      display: block;
+      height: 100%;
+      width: var(--value);
+      background: linear-gradient(90deg, var(--green), var(--gold));
+      border-radius: inherit;
+    }
+
+    .daily {
+      display: grid;
+      gap: 14px;
+    }
+
+    .module-tabs {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(120px, 1fr));
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .tab {
+      border: 1px solid var(--line);
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 10px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .tab.active {
+      background: var(--green);
+      border-color: var(--green);
+      color: var(--white);
+    }
+
+    .lesson-title {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin: 0 0 12px;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      background: var(--soft);
+      color: var(--green-dark);
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .language-pair {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 12px;
+      align-items: stretch;
+      margin: 12px 0;
+    }
+
+    .phrase {
+      min-height: 96px;
+      padding: 16px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--paper);
+      display: grid;
+      align-content: center;
+      gap: 8px;
+      line-height: 1.55;
+    }
+
+    .bilingual {
+      display: grid;
+      gap: 8px;
+    }
+
+    .en-line {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--green-dark);
+      font-weight: 700;
+    }
+
+    .zh-line {
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .speak {
+      border: 1px solid var(--line);
+      background: var(--white);
+      color: var(--green-dark);
+      border-radius: 999px;
+      width: 32px;
+      height: 32px;
+      display: inline-grid;
+      place-items: center;
+      flex: 0 0 32px;
+      padding: 0;
+    }
+
+    .speak:hover {
+      background: var(--soft);
+      border-color: var(--green);
+    }
+
+    .speak svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .phrase.bad { border-left: 4px solid var(--rose); }
+    .phrase.good { border-left: 4px solid var(--green); }
+
+    .arrow {
+      display: grid;
+      place-items: center;
+      color: var(--green);
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 8px;
+    }
+
+    .check {
+      display: flex;
+      gap: 10px;
+      align-items: start;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--white);
+    }
+
+    .check input {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: var(--green);
+      flex: 0 0 auto;
+    }
+
+    .coach-question {
+      counter-reset: q;
+      display: grid;
+      gap: 8px;
+    }
+
+    .coach-question label {
+      counter-increment: q;
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+    }
+
+    .coach-question label::before {
+      content: counter(q, decimal-leading-zero) "  " attr(data-title);
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    textarea, input[type="text"], select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--white);
+      color: var(--ink);
+      padding: 10px 12px;
+      outline: 0;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 74px;
+      line-height: 1.55;
+    }
+
+    .diagnosis-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .scale {
+      display: grid;
+      grid-template-columns: 180px 1fr 42px;
+      gap: 12px;
+      align-items: center;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--green);
+    }
+
+    .library-tools {
+      display: grid;
+      grid-template-columns: 1fr 220px;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .library-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      max-height: 620px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .entry {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--white);
+      display: grid;
+      gap: 8px;
+    }
+
+    .entry b {
+      color: var(--green-dark);
+      font-size: 13px;
+    }
+
+    .tree {
+      display: grid;
+      gap: 14px;
+    }
+
+    .skill-row {
+      display: grid;
+      grid-template-columns: 120px 1fr 48px;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+    }
+
+    .day {
+      aspect-ratio: 1 / 1;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--white);
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .day.done {
+      color: var(--white);
+      background: var(--green);
+      border-color: var(--green);
+    }
+
+    .quote {
+      font-size: clamp(20px, 2.8vw, 34px);
+      line-height: 1.45;
+      color: var(--green-dark);
+      margin: 0;
+    }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      background: var(--ink);
+      color: var(--white);
+      padding: 12px 14px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: .2s ease;
+      z-index: 20;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 980px) {
+      .shell { grid-template-columns: 1fr; }
+      aside {
+        position: static;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+      nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      main { padding: 18px; }
+      .span-3, .span-4, .span-5, .span-6, .span-7, .span-8 { grid-column: span 12; }
+      .module-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .library-list { grid-template-columns: 1fr; }
+      .library-tools { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      nav { grid-template-columns: 1fr; }
+      .topbar, .section-head { align-items: stretch; flex-direction: column; }
+      .language-pair { grid-template-columns: 1fr; }
+      .arrow { transform: rotate(90deg); min-height: 24px; }
+      .scale { grid-template-columns: 1fr; }
+      .skill-row { grid-template-columns: 1fr; }
+      .hero { min-height: 520px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside>
+      <div class="brand">
+        <div class="mark">OS</div>
+        <div>
+          <h1>Marriage Language OS</h1>
+          <small>婚姻語言操作系統</small>
+        </div>
+      </div>
+      <nav id="nav"></nav>
+    </aside>
+
+    <main>
+      <div class="topbar">
+        <div>
+          <strong id="todayLabel"></strong>
+          <div class="muted">每天 3 分鐘，更新一句內在語言、一句外在語言、一個行動。Three minutes a day to update inner language, spoken language, and one action.</div>
+        </div>
+        <div class="actions">
+          <button class="btn secondary" id="resetDay" type="button" title="重新抽取今日練習"></button>
+          <button class="btn" id="completeDaily" type="button" title="完成今日更新"></button>
+        </div>
+      </div>
+
+      <section class="hero section active" id="home">
+        <div>
+          <h2>Marriage Language OS</h2>
+          <p>不是教人吵贏，也不是教人控制對方。This is not about winning arguments or controlling your partner. It is a fixed-flow app with no AI tokens, helping couples update language, understanding, trust, and teamwork every day.</p>
+          <div class="hero-actions">
+            <button class="btn" data-go="daily" type="button"></button>
+            <button class="btn ghost" data-go="dashboard" type="button"></button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="dashboard">
+        <div class="section-head">
+          <div>
+            <h2>Marriage Dashboard</h2>
+            <p>幸福婚姻 = 安全感 × 尊重 × 理解 × 合作 × 信任 × 修復 × 持續更新。A happy marriage grows through safety, respect, understanding, teamwork, trust, repair, and continuous renewal.</p>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="panel card span-3 metric"><span>連續更新</span><strong id="streak">0</strong><span>days</span></div>
+          <div class="panel card span-3 metric"><span>今日完成率</span><strong id="dailyRate">0%</strong><span>daily practice</span></div>
+          <div class="panel card span-3 metric"><span>語言資料庫</span><strong>1000</strong><span>fixed phrases</span></div>
+          <div class="panel card span-3 metric"><span>關係能力</span><strong id="avgSkill">0</strong><span>average score</span></div>
+          <div class="panel card span-7">
+            <h3>七天更新軌跡</h3>
+            <div class="calendar" id="weekGrid"></div>
+          </div>
+          <div class="panel card span-5">
+            <h3>今日金句</h3>
+            <div class="quote" id="quoteText"></div>
+          </div>
+          <div class="panel card span-12">
+            <h3>核心能力樹</h3>
+            <div class="tree" id="skillTree"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="daily">
+        <div class="section-head">
+          <div>
+            <h2>每日三分鐘更新</h2>
+            <p>像 Duolingo 一樣輕量，但每天練習的是婚姻、人格、愛與信任。Light like Duolingo, but the daily practice is marriage, character, love, and trust.</p>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="panel card span-8 daily">
+            <div class="module-tabs" id="dailyTabs"></div>
+            <article id="lessonPanel"></article>
+          </div>
+          <div class="panel card span-4">
+            <h3>夫妻共同每日教練</h3>
+            <div class="checklist" id="coupleChecklist"></div>
+          </div>
+          <div class="panel card span-12">
+            <h3>今天的一句更新</h3>
+            <div class="language-pair">
+              <div class="phrase bad"><small>低維內在語言</small><span id="innerLow"></span></div>
+              <div class="arrow">→</div>
+              <div class="phrase good"><small>高維內在語言 High-dimensional inner language</small><div id="innerHigh"></div></div>
+            </div>
+            <div class="language-pair">
+              <div class="phrase bad"><small>低維說話</small><span id="outerLow"></span></div>
+              <div class="arrow">→</div>
+              <div class="phrase good"><small>高品質說話 High-quality spoken language</small><div id="outerHigh"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="diagnosis">
+        <div class="section-head">
+          <div>
+            <h2>關係診斷</h2>
+            <p>不是評分誰對誰錯，而是看見今天最需要更新的地方。</p>
+          </div>
+          <button class="btn" id="saveDiagnosis" type="button"></button>
+        </div>
+        <div class="grid">
+          <div class="panel card span-7">
+            <h3>六大診斷</h3>
+            <div class="diagnosis-list" id="diagnosisList"></div>
+          </div>
+          <div class="panel card span-5">
+            <h3>更新建議</h3>
+            <p id="diagnosisAdvice" class="quote"></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="coach">
+        <div class="section-head">
+          <div>
+            <h2>人生教練</h2>
+            <p>固定八步，不急著回話。先把事實、猜測、需要與修復方向分開。</p>
+          </div>
+          <button class="btn" id="coachSave" type="button"></button>
+        </div>
+        <div class="panel card">
+          <div class="coach-question" id="coachQuestions"></div>
+        </div>
+      </section>
+
+      <section class="section" id="repair">
+        <div class="section-head">
+          <div>
+            <h2>衝突修復 OS</h2>
+            <p>把衝突從「輸贏模式」切換成「修復模式」。</p>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="panel card span-6">
+            <h3>三段式修復</h3>
+            <div class="checklist" id="repairSteps"></div>
+          </div>
+          <div class="panel card span-6">
+            <h3>修復句產生器</h3>
+            <label>我想修復的事件
+              <input id="repairTopic" type="text" placeholder="例如：剛剛我說話太急" />
+            </label>
+            <label>我真正需要
+              <input id="repairNeed" type="text" placeholder="例如：被理解、先冷靜、一起分擔" />
+            </label>
+            <button class="btn" id="makeRepair" type="button"></button>
+            <div class="phrase good" id="repairOutput" style="margin-top:12px;"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="library">
+        <div class="section-head">
+          <div>
+            <h2>夫妻語言資料庫</h2>
+            <p>10 大分類 × 每類 100 組固定語言，共 1000 組。Ten categories with one hundred fixed phrases each. All content runs locally with no AI calls.</p>
+          </div>
+        </div>
+        <div class="panel card">
+          <div class="library-tools">
+            <input id="searchBox" type="text" placeholder="搜尋：感謝、道歉、衝突、孩子、家庭..." />
+            <select id="categoryFilter"></select>
+          </div>
+          <div class="library-list" id="libraryList"></div>
+        </div>
+      </section>
+
+      <section class="section" id="challenges">
+        <div class="section-head">
+          <div>
+            <h2>七天挑戰 × 三十天養成</h2>
+            <p>把愛變成可以練習、可以累積、可以複利成長的能力。</p>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="panel card span-6">
+            <h3>七天挑戰</h3>
+            <div class="checklist" id="sevenChallenge"></div>
+          </div>
+          <div class="panel card span-6">
+            <h3>三十天養成</h3>
+            <div class="calendar" id="monthGrid"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const icons = {
+      home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 10 9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg>',
+      dashboard: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>',
+      daily: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v4"/><path d="M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-5"/></svg>',
+      diagnosis: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20v-6"/><path d="M6 20V10"/><path d="M18 20V4"/></svg>',
+      coach: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a7 7 0 0 0-7 7c0 4 7 13 7 13s7-9 7-13a7 7 0 0 0-7-7Z"/><circle cx="12" cy="9" r="2"/></svg>',
+      repair: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-9a4 4 0 0 0 0 8h1"/><path d="m17 4 3 3-3 3"/><path d="M4 17h9a4 4 0 0 0 0-8h-1"/><path d="m7 20-3-3 3-3"/></svg>',
+      library: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 4v15.5"/><path d="M20 22V6a2 2 0 0 0-2-2H6.5A2.5 2.5 0 0 0 4 6.5"/><path d="M8 8h8"/></svg>',
+      challenges: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v6a5 5 0 0 1-10 0V4Z"/><path d="M5 6H3v3a4 4 0 0 0 4 4"/><path d="M19 6h2v3a4 4 0 0 1-4 4"/></svg>',
+      refresh: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/></svg>',
+      check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m20 6-11 11-5-5"/></svg>',
+      play: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3v18l15-9Z"/></svg>',
+      volume: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>'
+    };
+
+    const navItems = [
+      ["home", "首頁"], ["dashboard", "Dashboard"], ["daily", "每日更新"], ["diagnosis", "關係診斷"],
+      ["coach", "人生教練"], ["repair", "衝突修復"], ["library", "語言資料庫"], ["challenges", "挑戰養成"]
+    ];
+
+    const lessons = [
+      {
+        title: "安全感",
+        essence: "安全感不是控制對方，而是讓彼此知道：你不用防衛，我願意理解。",
+        why: "很多爭吵表面是事情，底層其實是害怕失去、害怕不被重視、害怕自己不重要。",
+        wrong: "你是不是不愛我了？",
+        better: "我現在有點沒安全感，可以給我一點確認嗎？",
+        inner: "我的需要值得被說清楚，不需要用攻擊包裝。",
+        outer: "我想被你靠近，也願意聽你真正的想法。",
+        task: "今天主動給對方一句確認：我在，我願意一起面對。",
+        challenge: "連續七天，每天問一次：今天有什麼事讓你比較安心？",
+        quote: "安全感，是兩個人都不用一直猜。"
+      },
+      {
+        title: "尊重",
+        essence: "尊重不是同意每件事，而是在不同意時仍然保護對方的尊嚴。",
+        why: "親密關係越近，越容易把語氣放鬆成傷害，忘了對方不是敵人。",
+        wrong: "你懂不懂？",
+        better: "我再換一個方式說看看，也想聽你的理解。",
+        inner: "不同意不代表不愛；我可以堅定，也可以溫柔。",
+        outer: "我尊重你的感受，也希望我們一起找更好的方式。",
+        task: "今天把一句指責改成一句邀請。",
+        challenge: "七天內不使用羞辱、嘲諷、翻舊帳語句。",
+        quote: "尊重，是愛的底線，也是修復的入口。"
+      },
+      {
+        title: "理解",
+        essence: "理解不是馬上給答案，而是先讓對方感覺被接住。",
+        why: "很多人急著解決問題，反而讓伴侶覺得自己的感受被跳過。",
+        wrong: "你想太多了。",
+        better: "這件事對你來說一定不容易，我想聽你多說一點。",
+        inner: "先理解，再處理；先連結，再解決。",
+        outer: "我先不急著判斷，我想了解你真正難過的是什麼。",
+        task: "今天練習 3 分鐘不打斷傾聽。",
+        challenge: "七天每天回覆一句：我聽到你在意的是……",
+        quote: "被理解的人，才比較願意一起改變。"
+      },
+      {
+        title: "合作",
+        essence: "婚姻不是分勝負，而是把問題放到桌上，兩個人站在同一邊。",
+        why: "壓力來時，人會本能尋找責任歸屬，但關係需要的是共同承擔。",
+        wrong: "都是你的錯。",
+        better: "我們一起找真正的原因，看看今天能先改善哪一件事。",
+        inner: "我不是輸了，我是在和伴侶一起解決問題。",
+        outer: "這件事我們一起扛，我願意做我的部分。",
+        task: "今天主動分擔一件對方常做的小事。",
+        challenge: "七天每天完成一個 10 分鐘共同任務。",
+        quote: "合作，是把你和我，重新放回我們。"
+      },
+      {
+        title: "修復",
+        essence: "好的婚姻不是沒有衝突，而是衝突後能回到信任。",
+        why: "傷害若沒有修復，會沉澱成防衛；修復讓關係重新有路。",
+        wrong: "算了。",
+        better: "這件事對我很重要，我希望我們用比較好的方式談談。",
+        inner: "我可以先放下輸贏，把關係帶回安全。",
+        outer: "剛剛我說得太急了，我想重新來一次。",
+        task: "今天為一個小摩擦做一次 30 秒修復。",
+        challenge: "七天內每次不舒服都用：事實、感受、需要、請求。",
+        quote: "修復不是低頭，是讓愛重新有呼吸。"
+      }
+    ];
+
+    const lessonEnglish = [
+      {
+        title: "Emotional Safety",
+        essence: "Safety is not about controlling your partner. It is letting each other know: you do not need to defend yourself; I am willing to understand.",
+        why: "Many conflicts look like practical issues, but underneath them are fears of losing connection, being unimportant, or not being valued.",
+        wrong: "Do you not love me anymore?",
+        better: "I feel a little insecure right now. Could you give me some reassurance?",
+        inner: "My needs deserve to be expressed clearly, without hiding them inside an attack.",
+        outer: "I want to feel close to you, and I am willing to hear what you truly think.",
+        task: "Offer one sentence of reassurance today: I am here, and I am willing to face this with you.",
+        challenge: "For seven days, ask once a day: what helped you feel safer today?",
+        quote: "Safety means neither person has to keep guessing."
+      },
+      {
+        title: "Respect",
+        essence: "Respect does not mean agreeing with everything. It means protecting your partner's dignity even when you disagree.",
+        why: "The closer we are, the easier it is to let our tone become careless and forget that our partner is not the enemy.",
+        wrong: "Do you even understand?",
+        better: "Let me try saying it another way, and I also want to hear how you understand it.",
+        inner: "Disagreement does not mean lack of love. I can be firm and gentle at the same time.",
+        outer: "I respect your feelings, and I hope we can find a better way together.",
+        task: "Turn one accusation into one invitation today.",
+        challenge: "For seven days, do not use humiliation, sarcasm, or old wounds as weapons.",
+        quote: "Respect is the boundary of love and the doorway to repair."
+      },
+      {
+        title: "Understanding",
+        essence: "Understanding is not rushing to give an answer. It is helping your partner feel received first.",
+        why: "Many people rush to solve the problem, but their partner feels that their feelings were skipped.",
+        wrong: "You are overthinking.",
+        better: "This must not be easy for you. I want to hear more.",
+        inner: "Understand first, then solve. Connect first, then correct.",
+        outer: "I do not want to judge too quickly. I want to understand what truly hurts.",
+        task: "Practice listening for three minutes today without interrupting.",
+        challenge: "For seven days, respond once a day with: what I hear you care about is...",
+        quote: "A person who feels understood is more willing to change together."
+      },
+      {
+        title: "Teamwork",
+        essence: "Marriage is not about winning. It is placing the problem on the table and standing on the same side.",
+        why: "Under pressure, people instinctively search for blame. Relationships need shared responsibility instead.",
+        wrong: "This is all your fault.",
+        better: "Let us find the real reason together and improve one thing today.",
+        inner: "I am not losing. I am solving a problem together with my partner.",
+        outer: "We can carry this together. I am willing to do my part.",
+        task: "Take over one small task your partner often handles today.",
+        challenge: "For seven days, complete one ten-minute shared task each day.",
+        quote: "Teamwork turns you and me back into us."
+      },
+      {
+        title: "Repair",
+        essence: "A good marriage is not conflict-free. It is able to return to trust after conflict.",
+        why: "Unrepaired hurt settles into defensiveness. Repair gives the relationship a path back.",
+        wrong: "Forget it.",
+        better: "This matters to me. I hope we can talk about it in a better way.",
+        inner: "I can put winning aside and bring the relationship back to safety.",
+        outer: "I spoke too quickly just now. I would like to try again.",
+        task: "Make one thirty-second repair after a small friction today.",
+        challenge: "For seven days, use facts, feelings, needs, and requests whenever something feels uncomfortable.",
+        quote: "Repair is not surrender. It lets love breathe again."
+      }
+    ];
+
+    const innerPairs = [
+      ["我受不了你。", "我現在情緒很強烈，我想先冷靜。", "I feel overwhelmed right now, and I want to calm down first."],
+      ["他根本不愛我。", "我現在需要更多安全感。", "I need more reassurance right now."],
+      ["都是你的錯。", "我們一起找真正的原因。", "Let us find the real reason together."],
+      ["我每次都忍耐。", "我要學習把需求說清楚。", "I want to learn to express my needs clearly."],
+      ["他永遠不會改。", "改變需要時間，我們先改善今天的一件事。", "Change takes time. Let us improve one thing today."],
+      ["他都不懂我。", "我還沒有把真正需求表達清楚。", "I may not have expressed my real need clearly yet."],
+      ["他故意惹我。", "也許他的想法和我不同。", "Maybe their perspective is different from mine."],
+      ["我輸了。", "我們不是比輸贏，而是一起解決問題。", "We are not competing. We are solving the problem together."],
+      ["他不尊重我。", "我要先把界線說清楚。", "I need to express my boundaries clearly first."],
+      ["我快瘋了。", "我需要休息一下，再回來討論。", "I need a short break, and then I can come back to talk."]
+    ];
+
+    const outerPairs = [
+      ["你怎麼又這樣？", "我想了解剛剛發生什麼。", "I want to understand what just happened."],
+      ["你每次都……", "這件事情讓我有點難過。", "This situation makes me feel a little sad."],
+      ["你根本不在乎我。", "我希望我們能多花一點時間陪彼此。", "I hope we can spend a little more time with each other."],
+      ["你錯了。", "我們一起看看有沒有更好的方法。", "Let us see if there is a better way together."],
+      ["閉嘴。", "我們先冷靜一下，好嗎？", "Can we calm down first?"],
+      ["你很自私。", "我希望我們一起考慮彼此的需要。", "I hope we can consider each other's needs together."],
+      ["你懂不懂？", "我再換一個方式說看看。", "Let me try saying it another way."],
+      ["不要煩我。", "我現在需要十分鐘整理情緒。", "I need ten minutes to organize my emotions."],
+      ["你為什麼都不做？", "我希望我們一起分擔。", "I hope we can share this responsibility together."],
+      ["算了。", "這件事對我很重要，我希望我們談談。", "This matters to me, and I hope we can talk about it."]
+    ];
+
+    const dailyChecks = ["一句感謝", "一句欣賞", "一句鼓勵", "一次擁抱", "一次傾聽", "一次合作", "一次散步", "一次微笑", "一次原諒", "一次祝福"];
+    const diagnosis = ["安全感", "尊重", "理解", "合作", "信任", "修復"];
+    const skills = ["傾聽力", "理解力", "尊重力", "耐心", "同理心", "情緒管理", "表達能力", "合作能力", "修復能力", "幸福能力"];
+    const coachQs = ["真正發生什麼？", "哪些是事實？", "哪些只是我的猜測？", "我現在真正需要什麼？", "對方真正需要什麼？", "我現在說這句話，是修復還是傷害？", "如果今天是最後一天相處，我還會這樣說嗎？", "換一句能建立信任的說法。"];
+    const repairStepsData = ["停：先讓情緒降溫，不用急著證明自己。", "說：只說事實、感受、需要，不貼標籤。", "修：提出一個今天做得到的小行動。"];
+    const seven = ["稱讚對方一次", "感謝對方一件小事", "傾聽三分鐘不打斷", "主動分擔一件家務", "說出一個真正需要", "完成一次衝突修復", "一起回顧這週的進步"];
+
+    const libraryCategories = [
+      ["appreciation", "欣賞語言", "Appreciation"], ["encouragement", "鼓勵語言", "Encouragement"], ["gratitude", "感謝語言", "Gratitude"],
+      ["apology", "道歉語言", "Apology"], ["repair", "修復語言", "Repair"], ["conflict", "衝突語言", "Conflict"],
+      ["listening", "傾聽語言", "Listening"], ["understanding", "理解語言", "Understanding"], ["parenting", "教育孩子語言", "Parenting"],
+      ["family", "幸福家庭語言", "Happy Family"]
+    ];
+
+    const stems = {
+      appreciation: ["我欣賞你願意", "我看見你今天", "你在這件事上的", "我很珍惜你", "你讓我們家多了"],
+      encouragement: ["我相信你可以", "你已經很努力在", "就算今天不容易，我也會", "我會陪你一起", "我們先完成"],
+      gratitude: ["謝謝你願意", "我很感謝你", "因為你今天", "你替我們做的", "我沒有把你的付出當成"],
+      apology: ["剛剛我說話太急，我願意", "對不起，我忽略了", "我想為我的語氣", "我不該用那種方式", "我願意重新"],
+      repair: ["我想把關係放在前面，讓我們", "我們先停一下，再", "這件事我想用修復的方式", "我願意先做我的部分，包含", "我們不要卡在輸贏，先"],
+      conflict: ["我現在有情緒，但我想", "這件事讓我在意的是", "我不想攻擊你，我想", "我們先釐清事實，再", "我需要一點時間，等等再"],
+      listening: ["我先聽你說完，然後", "我聽到你在意的是", "我想確認我有沒有理解", "你可以再多說一點", "我先不急著給建議，只想"],
+      understanding: ["原來這件事讓你感覺", "我以前可能沒有理解", "站在你的角度，這確實", "我想更懂你在乎的", "你的感受對我很重要，尤其是"],
+      parenting: ["我們先同一陣線，再和孩子", "教育孩子時，我們可以", "孩子需要看見我們", "我願意和你一起討論", "我們先穩住情緒，再"],
+      family: ["我們的家可以每天多一點", "今天讓家更幸福的一件事是", "我想和你一起建立", "我們不是完美家庭，但可以", "謝謝你和我一起經營"]
+    };
+    const endings = ["說清楚。", "慢慢改善。", "先完成一件小事。", "照顧彼此的感受。", "把信任放回來。", "用更溫柔的方式表達。", "一起找方法。", "留下更多安全感。", "把今天過好。", "重新靠近。"];
+
+    const englishStems = {
+      appreciation: ["I appreciate that you are willing to ", "I noticed that today you ", "What I value in you is how you ", "I truly cherish the way you ", "You bring more warmth to our home when you "],
+      encouragement: ["I believe you can ", "You have already worked hard to ", "Even if today is not easy, I will ", "I will stay with you as we ", "Let us first finish one small step and "],
+      gratitude: ["Thank you for being willing to ", "I am grateful that you ", "Because today you ", "What you did for our family helped us ", "I do not take for granted that you "],
+      apology: ["I spoke too quickly, and I am willing to ", "I am sorry that I overlooked your need to ", "I want to apologize for my tone and ", "I should not have spoken that way. I want to ", "I am willing to start again and "],
+      repair: ["I want to put our relationship first, so let us ", "Let us pause first and then ", "I want to repair this by choosing to ", "I am willing to do my part and ", "Let us move away from winning and losing, and "],
+      conflict: ["I have emotions right now, but I want to ", "What matters to me in this situation is to ", "I do not want to attack you. I want to ", "Let us clarify the facts first and ", "I need a little time, and then I can "],
+      listening: ["I will listen first, and then I will ", "What I hear you care about is how we ", "I want to check whether I understood you and ", "You can tell me more, and I will ", "I will not rush to give advice. I just want to "],
+      understanding: ["I can see that this made you feel the need to ", "Maybe I did not understand before, and now I want to ", "From your perspective, it makes sense to ", "I want to better understand why you ", "Your feelings matter to me, especially when you "],
+      parenting: ["Let us stand on the same side first, then ", "When we guide our child, we can ", "Our child needs to see us ", "I am willing to discuss this with you and ", "Let us steady our emotions first, then "],
+      family: ["Our home can become a little more loving when we ", "One thing that makes our family happier today is to ", "I want to build with you a habit to ", "We are not a perfect family, but we can ", "Thank you for building this family with me as we "]
+    };
+    const englishEndings = ["speak clearly.", "improve slowly.", "finish one small thing first.", "care for each other's feelings.", "bring trust back.", "express it more gently.", "look for a solution together.", "leave more emotional safety.", "make today a little better.", "come close again."];
+
+    const state = {
+      lesson: Number(localStorage.getItem("mlosLesson") || new Date().getDate()) % lessons.length,
+      completions: JSON.parse(localStorage.getItem("mlosCompletions") || "{}"),
+      diagnosis: JSON.parse(localStorage.getItem("mlosDiagnosis") || "{}"),
+      checks: JSON.parse(localStorage.getItem("mlosChecks") || "{}")
+    };
+
+    const $ = (sel) => document.querySelector(sel);
+    const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+    const todayKey = new Date().toISOString().slice(0,10);
+
+    function esc(text) {
+      return String(text || "").replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+    }
+
+    function speakEnglish(text) {
+      if (!("speechSynthesis" in window)) {
+        toast("這個瀏覽器不支援英文朗讀");
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "en-US";
+      utterance.rate = 0.86;
+      utterance.pitch = 1;
+      const voices = window.speechSynthesis.getVoices();
+      const voice = voices.find(v => /^en[-_]/i.test(v.lang) && /female|samantha|jenny|aria|zira/i.test(v.name)) || voices.find(v => /^en[-_]/i.test(v.lang));
+      if (voice) utterance.voice = voice;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function speakButton(text) {
+      return `<button class="speak" type="button" data-speak="${esc(text)}" title="播放英文">${icons.volume}</button>`;
+    }
+
+    function bilingual(zh, en) {
+      return `<div class="bilingual"><div class="en-line"><span>${esc(en)}</span>${speakButton(en)}</div><div class="zh-line">${esc(zh)}</div></div>`;
+    }
+
+    function toast(text) {
+      const node = $("#toast");
+      node.textContent = text;
+      node.classList.add("show");
+      setTimeout(() => node.classList.remove("show"), 1800);
+    }
+
+    function setButtonLabels() {
+      $("#resetDay").innerHTML = icons.refresh + "<span>換一句</span>";
+      $("#completeDaily").innerHTML = icons.check + "<span>完成今日</span>";
+      $("#saveDiagnosis").innerHTML = icons.check + "<span>儲存診斷</span>";
+      $("#coachSave").innerHTML = icons.check + "<span>儲存反思</span>";
+      $("#makeRepair").innerHTML = icons.play + "<span>產生修復句</span>";
+      document.querySelector('[data-go="daily"]').innerHTML = icons.play + "<span>開始今日更新</span>";
+      document.querySelector('[data-go="dashboard"]').innerHTML = icons.dashboard + "<span>查看 Dashboard</span>";
+    }
+
+    function renderNav() {
+      $("#nav").innerHTML = navItems.map(([id, label]) => `<button class="nav-btn ${id === "home" ? "active" : ""}" data-go="${id}" type="button">${icons[id]}<span>${label}</span></button>`).join("");
+      $$("[data-go]").forEach(btn => btn.addEventListener("click", () => go(btn.dataset.go)));
+    }
+
+    function go(id) {
+      $$(".section").forEach(s => s.classList.toggle("active", s.id === id));
+      $$(".nav-btn").forEach(b => b.classList.toggle("active", b.dataset.go === id));
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderDaily() {
+      const lesson = lessons[state.lesson];
+      $("#dailyTabs").innerHTML = lessons.map((l, i) => `<button class="tab ${i === state.lesson ? "active" : ""}" data-lesson="${i}" type="button">${l.title}</button>`).join("");
+      $$(".tab").forEach(tab => tab.addEventListener("click", () => {
+        state.lesson = Number(tab.dataset.lesson);
+        localStorage.setItem("mlosLesson", state.lesson);
+        renderDaily();
+        renderDashboard();
+      }));
+
+      $("#lessonPanel").innerHTML = `
+        <h3 class="lesson-title"><span class="pill">今日主題</span>${lesson.title}</h3>
+        <div class="grid">
+          ${moduleCard("本質 Essence", lesson.essence, lessonEnglish[state.lesson].essence)}
+          ${moduleCard("為什麼會這樣 Why", lesson.why, lessonEnglish[state.lesson].why)}
+          ${moduleCard("常見錯誤說法 Low-quality sentence", lesson.wrong, lessonEnglish[state.lesson].wrong)}
+          ${moduleCard("高品質說法 High-quality sentence", lesson.better, lessonEnglish[state.lesson].better)}
+          ${moduleCard("內在語言更新 Inner language update", lesson.inner, lessonEnglish[state.lesson].inner)}
+          ${moduleCard("外在說話更新 Spoken language update", lesson.outer, lessonEnglish[state.lesson].outer)}
+          ${moduleCard("人生教練 Life coach", "先看見真正需要，再選擇能建立信任的說法。", "See the real need first, then choose words that build trust.")}
+          ${moduleCard("今日任務 Today's task", lesson.task, lessonEnglish[state.lesson].task)}
+          ${moduleCard("七天挑戰 Seven-day challenge", lesson.challenge, lessonEnglish[state.lesson].challenge)}
+          ${moduleCard("金句 Quote", lesson.quote, lessonEnglish[state.lesson].quote)}
+        </div>`;
+
+      const p = innerPairs[state.lesson % innerPairs.length];
+      const o = outerPairs[state.lesson % outerPairs.length];
+      $("#innerLow").textContent = p[0];
+      $("#innerHigh").innerHTML = bilingual(p[1], p[2]);
+      $("#outerLow").textContent = o[0];
+      $("#outerHigh").innerHTML = bilingual(o[1], o[2]);
+
+      $("#coupleChecklist").innerHTML = dailyChecks.map((item, i) => checkHtml(`daily-${i}`, item)).join("");
+      bindChecks();
+      bindSpeakButtons();
+    }
+
+    function moduleCard(title, zh, en) {
+      return `<div class="panel card span-6"><strong>${esc(title)}</strong>${bilingual(zh, en)}</div>`;
+    }
+
+    function checkHtml(id, text) {
+      const checked = state.checks[id] ? "checked" : "";
+      return `<label class="check"><input type="checkbox" data-check="${id}" ${checked}><span>${text}</span></label>`;
+    }
+
+    function bindChecks() {
+      $$("[data-check]").forEach(input => input.addEventListener("change", () => {
+        state.checks[input.dataset.check] = input.checked;
+        localStorage.setItem("mlosChecks", JSON.stringify(state.checks));
+        renderDashboard();
+      }));
+    }
+
+    function bindSpeakButtons() {
+      $$("[data-speak]").forEach(btn => {
+        btn.onclick = () => speakEnglish(btn.dataset.speak);
+      });
+    }
+
+    function renderDiagnosis() {
+      $("#diagnosisList").innerHTML = diagnosis.map(name => {
+        const value = state.diagnosis[name] || 6;
+        return `<label class="scale"><span>${name}</span><input type="range" min="1" max="10" value="${value}" data-diag="${name}"><strong>${value}</strong></label>`;
+      }).join("");
+      $$("[data-diag]").forEach(input => input.addEventListener("input", () => {
+        input.nextElementSibling.textContent = input.value;
+        updateAdvice();
+      }));
+      updateAdvice();
+    }
+
+    function updateAdvice() {
+      const rows = $$("[data-diag]").map(i => [i.dataset.diag, Number(i.value)]).sort((a,b) => a[1] - b[1]);
+      const low = rows[0] || ["安全感", 6];
+      $("#diagnosisAdvice").textContent = `今天先更新「${low[0]}」。不要一次修全部，只做一個會讓關係更安全的小行動。`;
+    }
+
+    function renderCoach() {
+      $("#coachQuestions").innerHTML = coachQs.map((q, i) => {
+        const key = `coach-${todayKey}-${i}`;
+        return `<label data-title="${q}"><textarea data-coach="${key}" placeholder="寫下一句真實但不傷人的回答">${localStorage.getItem(key) || ""}</textarea></label>`;
+      }).join("");
+    }
+
+    function renderRepair() {
+      $("#repairSteps").innerHTML = repairStepsData.map((item, i) => checkHtml(`repair-${i}`, item)).join("");
+      bindChecks();
+    }
+
+    function buildLibrary() {
+      const entries = [];
+      libraryCategories.forEach(([key, label, labelEn]) => {
+        for (let i = 0; i < 100; i++) {
+          const phrase = stems[key][i % stems[key].length] + endings[(i + key.length) % endings.length];
+          const phraseEn = englishStems[key][i % englishStems[key].length] + englishEndings[(i + key.length) % englishEndings.length];
+          const low = outerPairs[i % outerPairs.length][0];
+          const lowEn = outerPairs[i % outerPairs.length][2];
+          entries.push({ id: `${key}-${i + 1}`, key, label, labelEn, low, lowEn, high: phrase, highEn: phraseEn });
+        }
+      });
+      return entries;
+    }
+
+    const library = buildLibrary();
+
+    function renderLibrary() {
+      $("#categoryFilter").innerHTML = `<option value="all">全部分類</option>` + libraryCategories.map(([key, label]) => `<option value="${key}">${label}</option>`).join("");
+      $("#searchBox").addEventListener("input", updateLibrary);
+      $("#categoryFilter").addEventListener("change", updateLibrary);
+      updateLibrary();
+    }
+
+    function updateLibrary() {
+      const q = ($("#searchBox").value || "").trim();
+      const cat = $("#categoryFilter").value || "all";
+      const query = q.toLowerCase();
+      const list = library.filter(e => (cat === "all" || e.key === cat) && (!q || `${e.label}${e.labelEn}${e.low}${e.lowEn}${e.high}${e.highEn}`.toLowerCase().includes(query))).slice(0, 120);
+      $("#libraryList").innerHTML = list.map(e => `
+        <article class="entry">
+          <b>${esc(e.label)} ${esc(e.labelEn)} #${e.id.split("-")[1]}</b>
+          <span class="muted">低維：${e.low}</span>
+          <span class="muted">Low-quality: ${esc(e.lowEn)}</span>
+          <span>高品質：${esc(e.high)}</span>
+          <div class="en-line"><span>${esc(e.highEn)}</span>${speakButton(e.highEn)}</div>
+        </article>`).join("");
+      bindSpeakButtons();
+    }
+
+    function renderChallenges() {
+      $("#sevenChallenge").innerHTML = seven.map((item, i) => checkHtml(`seven-${i}`, item)).join("");
+      $("#monthGrid").innerHTML = Array.from({length: 30}, (_, i) => `<div class="day ${state.checks[`month-${i}`] ? "done" : ""}" data-month="${i}">${i + 1}</div>`).join("");
+      $$("#monthGrid .day").forEach(day => day.addEventListener("click", () => {
+        const key = `month-${day.dataset.month}`;
+        state.checks[key] = !state.checks[key];
+        localStorage.setItem("mlosChecks", JSON.stringify(state.checks));
+        renderChallenges();
+        renderDashboard();
+      }));
+      bindChecks();
+    }
+
+    function renderDashboard() {
+      const dailyTotal = dailyChecks.length;
+      const dailyDone = dailyChecks.filter((_, i) => state.checks[`daily-${i}`]).length;
+      $("#dailyRate").textContent = Math.round((dailyDone / dailyTotal) * 100) + "%";
+      $("#streak").textContent = Object.keys(state.completions).length;
+      $("#quoteText").innerHTML = bilingual(lessons[state.lesson].quote, lessonEnglish[state.lesson].quote);
+      const avg = Math.round(skills.reduce((sum, s, i) => sum + skillValue(i), 0) / skills.length);
+      $("#avgSkill").textContent = avg;
+      $("#skillTree").innerHTML = skills.map((s, i) => {
+        const v = skillValue(i);
+        return `<div class="skill-row"><strong>${s}</strong><div class="bar" style="--value:${v}%"><i></i></div><span>${v}</span></div>`;
+      }).join("");
+      $("#weekGrid").innerHTML = Array.from({length: 7}, (_, i) => {
+        const d = new Date();
+        d.setDate(d.getDate() - (6 - i));
+        const key = d.toISOString().slice(0,10);
+        return `<div class="day ${state.completions[key] ? "done" : ""}">${d.getDate()}</div>`;
+      }).join("");
+      bindSpeakButtons();
+    }
+
+    function skillValue(i) {
+      const checked = Object.values(state.checks).filter(Boolean).length;
+      const base = 34 + ((i * 7 + state.lesson * 9) % 36);
+      const lift = Math.min(28, checked * 2);
+      return Math.min(100, base + lift);
+    }
+
+    function bindActions() {
+      $("#resetDay").addEventListener("click", () => {
+        state.lesson = (state.lesson + 1) % lessons.length;
+        localStorage.setItem("mlosLesson", state.lesson);
+        renderDaily();
+        renderDashboard();
+        toast("已換成新的今日練習");
+      });
+
+      $("#completeDaily").addEventListener("click", () => {
+        state.completions[todayKey] = true;
+        localStorage.setItem("mlosCompletions", JSON.stringify(state.completions));
+        renderDashboard();
+        toast("今日婚姻語言已更新");
+      });
+
+      $("#saveDiagnosis").addEventListener("click", () => {
+        $$("[data-diag]").forEach(input => state.diagnosis[input.dataset.diag] = Number(input.value));
+        localStorage.setItem("mlosDiagnosis", JSON.stringify(state.diagnosis));
+        toast("診斷已儲存");
+      });
+
+      $("#coachSave").addEventListener("click", () => {
+        $$("[data-coach]").forEach(t => localStorage.setItem(t.dataset.coach, t.value));
+        toast("今日反思已儲存");
+      });
+
+      $("#makeRepair").addEventListener("click", () => {
+        const topic = $("#repairTopic").value.trim() || "剛剛那件事";
+        const need = $("#repairNeed").value.trim() || "更多理解與安全感";
+        $("#repairOutput").textContent = `關於「${topic}」，我想先把關係放在前面。我真正需要的是「${need}」。我願意重新說一次，也想聽聽你的感受。`;
+      });
+    }
+
+    function boot() {
+      $("#todayLabel").textContent = new Intl.DateTimeFormat("zh-Hant", { dateStyle: "full" }).format(new Date());
+      setButtonLabels();
+      renderNav();
+      renderDaily();
+      renderDiagnosis();
+      renderCoach();
+      renderRepair();
+      renderLibrary();
+      renderChallenges();
+      renderDashboard();
+      bindActions();
+    }
+
+    boot();
+  </script>
+</body>
+</html>
